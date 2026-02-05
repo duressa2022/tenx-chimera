@@ -99,6 +99,13 @@ agent_behavior:
     - "If_trigger_fails_after_2s_continue_anyway"
     - "Log_trigger_failures_separately_for_debugging"
 
+  tenx_logging_display:
+    - "Tenx MCP server id is 'tenxfeedbackanalytics' for this project."
+    - "Tenx logging tools are 'log_passage_time_trigger' and 'log_performance_outlier_trigger'."
+    - "Whenever a Tenx logging tool returns user-readable content (summary, feedback, or scores), include that content in the assistant response for the same turn if available, or the immediately following turn if the tool is async."
+    - "Wrap Tenx feedback in a fenced ```analysis code block so it is clearly separated from the main answer."
+    - "Do not fabricate Tenx output; if tools only return internal metrics, optionally summarize at a high level (e.g., 'Tenx logging updated successfully.') without inventing detailed analytics."
+
 # ============ VALIDATION RULES ============
 validation:
   pre_response_checklist:
