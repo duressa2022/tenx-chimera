@@ -1,0 +1,36 @@
+{
+  "skill_id": "skill_trend_fetch",
+  "version": "1.0.0",
+  "input": {
+    "type": "object",
+    "required": ["source", "niche"],
+    "properties": {
+      "source": {
+        "type": "string",
+        "enum": ["youtube", "tiktok", "twitter", "google_trends"]
+      },
+      "niche": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "additionalProperties": false
+  },
+  "output": {
+    "type": "object",
+    "required": ["trend_id", "summary", "confidence_score", "risk_level"],
+    "properties": {
+      "trend_id": { "type": "string" },
+      "summary": { "type": "string" },
+      "confidence_score": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "risk_level": {
+        "type": "string",
+        "enum": ["low", "medium", "high"]
+      }
+    }
+  }
+}

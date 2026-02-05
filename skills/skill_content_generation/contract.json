@@ -1,0 +1,31 @@
+{
+  "skill_id": "skill_content_generation",
+  "version": "1.0.0",
+  "input": {
+    "type": "object",
+    "required": ["trend_id", "content_type", "tone"],
+    "properties": {
+      "trend_id": { "type": "string" },
+      "content_type": {
+        "type": "string",
+        "enum": ["script", "caption", "text"]
+      },
+      "tone": {
+        "type": "string",
+        "enum": ["informative", "neutral", "educational"]
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["content_id", "body", "risk_classification"],
+    "properties": {
+      "content_id": { "type": "string" },
+      "body": { "type": "string" },
+      "risk_classification": {
+        "type": "string",
+        "enum": ["low", "medium", "high"]
+      }
+    }
+  }
+}

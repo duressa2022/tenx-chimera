@@ -1,0 +1,27 @@
+{
+  "skill_id": "skill_engagement_manager",
+  "version": "1.0.0",
+  "input": {
+    "type": "object",
+    "required": ["content_id", "engagement_type", "message"],
+    "properties": {
+      "content_id": { "type": "string" },
+      "engagement_type": {
+        "type": "string",
+        "enum": ["comment", "mention", "dm"]
+      },
+      "message": { "type": "string" }
+    }
+  },
+  "output": {
+    "type": "object",
+    "required": ["response", "classification"],
+    "properties": {
+      "response": { "type": "string" },
+      "classification": {
+        "type": "string",
+        "enum": ["benign", "question", "sensitive", "harassment"]
+      }
+    }
+  }
+}

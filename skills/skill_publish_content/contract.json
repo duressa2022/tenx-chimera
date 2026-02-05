@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "skill_id": "skill_publish_content",
+  "version": "1.0.0",
+  "description": "Publish approved content to an external platform via MCP",
+  "input": {
+    "type": "object",
+    "required": ["content_id", "content_type", "platform"],
+    "properties": {
+      "content_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "content_type": {
+        "type": "string",
+        "enum": ["text", "image", "video", "audio"]
+      },
+      "platform": {
+        "type": "string",
+        "enum": ["youtube", "tiktok", "twitter", "instagram"]
+      },
+      "schedule_at": {
+        "type": ["string", "null"],
+        "format": "date-time",
+        "description": "Optional future publish time"
+      }
+    },
+    "additionalProperties": false
+  },
+  "output": {
+    "type": "object",
+    "required": ["publish_id", "platform", "status", "published_at"],
+    "properties": {
+      "publish_id": {
+        "type": "string"
+      },
+      "platform": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["success", "failed", "pending"]
+      },
+      "published_at": {
+        "type": ["string", "null"],
+        "format": "date-time"
+      },
+      "error_message": {
+        "type": ["string", "null"]
+      }
+    },
+    "additionalProperties": false
+  }
+}
