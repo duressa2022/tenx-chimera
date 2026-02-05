@@ -1,0 +1,80 @@
+erDiagram
+    INFLUENCER ||--o{ TREND : researches
+    TREND ||--o{ CONTENT : inspires
+    CONTENT ||--o{ PUBLISH_EVENT : produces
+    CONTENT ||--o{ ANALYTICS : measured_by
+    INFLUENCER ||--o{ AUDIT_LOG : generates
+    AGENT ||--o{ AUDIT_LOG : records
+    CONTENT ||--o{ ENGAGEMENT_EVENT : receives
+
+    INFLUENCER {
+        string influencer_id PK
+        string persona_name
+        string niche
+        string lifecycle_state
+        datetime created_at
+        datetime updated_at
+    }
+
+    TREND {
+        string trend_id PK
+        string source
+        string summary
+        float confidence_score
+        string risk_level
+        datetime detected_at
+    }
+
+    CONTENT {
+        string content_id PK
+        string trend_id FK
+        string influencer_id FK
+        string content_type
+        string body
+        string risk_classification
+        string approval_status
+        datetime created_at
+    }
+
+    PUBLISH_EVENT {
+        string publish_id PK
+        string content_id FK
+        string platform
+        string status
+        datetime published_at
+    }
+
+    ANALYTICS {
+        string analytics_id PK
+        string content_id FK
+        int views
+        int likes
+        int comments
+        int shares
+        string sentiment
+        datetime collected_at
+    }
+
+    ENGAGEMENT_EVENT {
+        string engagement_id PK
+        string content_id FK
+        string engagement_type
+        string classification
+        datetime occurred_at
+    }
+
+    AGENT {
+        string agent_id PK
+        string role
+        string version
+    }
+
+    AUDIT_LOG {
+        string audit_id PK
+        string agent_id FK
+        string influencer_id FK
+        string action_type
+        string outcome
+        string spec_reference
+        datetime occurred_at
+    }
