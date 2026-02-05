@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TrendFetcherOutput",
+  "type": "object",
+  "required": ["trend_id", "source", "summary", "confidence_score", "risk_level", "timestamp"],
+  "properties": {
+    "trend_id": { "type": "string" },
+    "source": { "type": "string" },
+    "summary": { "type": "string" },
+    "confidence_score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "risk_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

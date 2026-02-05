@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PublisherResult",
+  "type": "object",
+  "required": ["publish_id", "platform", "status", "timestamp"],
+  "properties": {
+    "publish_id": { "type": "string" },
+    "platform": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["success", "failed", "pending"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "error_message": {
+      "type": ["string", "null"]
+    }
+  },
+  "additionalProperties": false
+}

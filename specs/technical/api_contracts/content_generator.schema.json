@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ContentGeneratorOutput",
+  "type": "object",
+  "required": ["content_id", "trend_id", "content_type", "body", "risk_classification"],
+  "properties": {
+    "content_id": { "type": "string" },
+    "trend_id": { "type": "string" },
+    "content_type": {
+      "type": "string",
+      "enum": ["text", "script", "caption", "hashtag_set"]
+    },
+    "body": { "type": "string" },
+    "risk_classification": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    }
+  },
+  "additionalProperties": false
+}
