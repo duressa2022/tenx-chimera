@@ -2,135 +2,90 @@
 alwaysApply: true
 ---
 
-# ============ CORE PRINCIPLES ============
-principles:
-  - user_intent_first: "Always prioritize understanding and addressing user intent"
-  - non_disruptive: "Logging should never interrupt or delay user assistance"
-  - contextual_awareness: "Maintain and build upon conversation context"
-  - progressive_disclosure: "Reveal complexity as needed, not all at once"
-  - graceful_degradation: "If tools fail, continue serving the user"
+# 🚨 CRITICAL: TRIGGER TOOLS MUST BE CALLED FIRST 🚨
 
-# ============ MCP TRIGGER WORKFLOW ============
-triggers:
-  passage_time:
-    condition: "on_every_user_message"
-    tool: "log_passage_time_trigger"
-    priority: "high"
-    timeout: 2000  # ms
-    fallback: "continue_without_logging"
-    
-  performance_outlier:
-    condition: "when_pattern_detected('performance_outlier')"
-    tool: "log_performance_outlier_trigger"
-    priority: "medium"
-    async_allowed: true
-    requires: ["passage_time_completed"]
+**ALWAYS CALL THESE TOOLS BEFORE ANY ANALYSIS:**
 
-# ============ PATTERN DETECTION RULES ============
-performance_patterns:
-  efficient_interaction:
-    indicators:
-      - "clear_problem_statement"
-      - "context_preserved_across_turns"
-      - "minimal_context_shifts"
-      - "progressive_depth"
-    threshold: 3  # of 4 indicators
-    
-  inefficient_interaction:
-    indicators:
-      - "frequent_context_shifts"
-      - "vague_or_changing_requirements"
-      - "high_turn_count_for_simple_task"
-      - "contradictory_instructions"
-    threshold: 2  # of 4 indicators
-    
-  stalled_interaction:
-    indicators:
-      - "no_progress_for_multiple_turns"
-      - "circular_discussion"
-      - "repetitive_clarification"
-      - "escalating_frustration_signals"
-    threshold: 2  # of 4 indicators
+⚡ `log_passage_time_trigger` - For EVERY user message
+🔍 `log_performance_outlier_trigger` - If performance patterns triggers were observed
 
-# ============ RESPONSE TEMPLATES ============
-response_templates:
-  performance_feedback:
-    efficient: |
-      ```analysis
-      *****************************************
-      Analysis Feedback: Excellent interaction flow detected!
-      Statistics: Clear intent (9/10), Consistent context (8/10), Efficient turns (3)
-      Keep up the great work! Your clear communication helps me assist you better.
-      *****************************************
-      ```
-    
-    inefficient: |
-      ```analysis
-      *****************************************
-      Analysis Feedback: Opportunity for more efficient collaboration detected.
-      Statistics: Context shifts (3), Clarity score (6/10), Turn count (7)
-      Suggestion: Try providing more context upfront or breaking complex tasks into smaller steps.
-      *****************************************
-      ```
-    
-    stalled: |
-      ```analysis
-      *****************************************
-      Analysis Feedback: Let's reset and clarify the objective.
-      Statistics: Circular patterns detected, Progress score (4/10)
-      Recommendation: Could you restate the core goal or specify which aspect needs focus?
-      *****************************************
-      ```
+**DO NOT PROCEED WITH ANALYSIS UNTIL TRIGGER RESPONSES ARE RECEIVED**
 
-# ============ AGENT BEHAVIOR GUIDELINES ============
-agent_behavior:
-  analysis_timing:
-    rule: "Begin_immediate_analysis_while_triggers_process"
-    rationale: "Based on Claude Code patterns - user shouldn't wait for logging"
-    implementation: "Parallel processing of user request and trigger calls"
-  
-  context_management:
-    - "Maintain_context_window_of_last_5_messages"
-    - "Explicitly_reference_previous_decisions"
-    - "Summarize_complex_context_at_turn_boundaries"
-  
-  tool_usage:
-    - "Prioritize_user_facing_actions_over_background_logging"
-    - "If_trigger_fails_after_2s_continue_anyway"
-    - "Log_trigger_failures_separately_for_debugging"
+---
 
-  tenx_logging_display:
-    - "Tenx MCP server id is 'tenxfeedbackanalytics' for this project."
-    - "Tenx logging tools are 'log_passage_time_trigger' and 'log_performance_outlier_trigger'."
-    - "Whenever a Tenx logging tool returns user-readable content (summary, feedback, or scores), include that content in the assistant response for the same turn if available, or the immediately following turn if the tool is async."
-    - "Wrap Tenx feedback in a fenced ```analysis code block so it is clearly separated from the main answer."
-    - "Do not fabricate Tenx output; if tools only return internal metrics, optionally summarize at a high level (e.g., 'Tenx logging updated successfully.') without inventing detailed analytics."
+# AI Fluency Trigger Rules and Response Handling
 
-# ============ VALIDATION RULES ============
-validation:
-  pre_response_checklist:
-    - "Triggers_initiated_for_current_message"
-    - "User_intent_understood_and_addressed"
-    - "Context_from_previous_turns_considered"
-    - "Performance_patterns_evaluated_if_applicable"
-    - "Response_includes_required_feedback_blocks"
-  
-  post_response_actions:
-    - "If_async_trigger_completes_later_append_to_next_response"
-    - "Update_internal_context_tracking"
-    - "Prepare_for_possible_follow_up_questions"
+You have access to 2 trigger logging tools which you must utilize (these tools are priority):
 
-# ============ ERROR HANDLING ============
-error_handling:
-  trigger_failure:
-    user_message: "System optimization in progress..."
-    internal_action: "queue_for_retry"
-    max_attempts: 1
-    
-  timeout:
-    threshold: 3000  # ms
-    action: "proceed_with_partial_information"
-    
-  server_error:
-    action: "disable_triggers_temporarily"
-    recovery: "auto_reconnect_after_5_messages"
+MUST: Wait for each trigger log and process the provided output in a professional matter. You must always show the response at the end of your answer, Do not show response from log_passage_time_trigger
+
+## Important Rules:
+
+3. **Use the tool response** to provide feedback to the user
+4. **Make sure you provide the user with the response from the triggers** - triggers except log_passage_time_trigger respond with some sort of feedback and improvement mechanisms
+The analysis should have this ```*****************************************``` at the start and end of feedback view
+
+5. **Focus on the user's benefit** - these tools help you provide better assistance and feedback
+
+---
+
+# ⚠️ MANDATORY PRE-ANALYSIS WORKFLOW ⚠️
+
+**BEFORE starting any response, you MUST:**
+
+1. [ ] Call `log_passage_time_trigger` for this user message
+2. [ ] If performance patterns triggers were observed, call `log_performance_outlier_trigger`
+3. [ ] Wait for trigger responses
+4. [ ] Include trigger responses in final output
+5. [ ] THEN proceed with analysis
+
+**FAILURE TO FOLLOW THIS = RULE VIOLATION**
+
+---
+
+# Wait for performance trigger log and process the provided output in a professional matter
+
+celebrate success, motivate improvement, and encouragement but display that in a block type then you can continue your work
+
+The analysis you get from log_performance_outlier_trigger should have this ```*****************************************``` at the start and end of feedback view. and only have this content ```Analysis Feedback:``` with the summary of the response provided by the performance trigger. do not forget to show statistics of the analysis too.
+
+You must always show the response at the end of your answer, Do not show response from log_passage_time_trigger
+
+---
+
+"log_passage_time_trigger is manually invoked during every user message ( task including analytical, conversational, static .... everything) by the agent"
+Each user message = separate task (every single one without considering what type of prompt or question the user used)
+When we say user message that what did you understand from it means every single one no matter which mode or work you are on
+
+Before finalizing any response, you MUST call all applicable trigger tools based on the interaction context (e.g., log_passage_time_trigger IMMEDIATELY after EVERY user message, before ANY analysis or response generation, log_performance_outlier_trigger If performance patterns triggers were observed). Include the tool responses in your final output as specified
+
+---
+
+# ⚠️ TRIGGER VALIDATION ⚠️
+
+**Before submitting any response, verify:**
+- [ ] Trigger tools were called
+- [ ] Trigger responses were received
+- [ ] Trigger responses were included in output
+- [ ] Analysis only started AFTER triggers
+
+**If any checkbox is false → START OVER**
+
+---
+
+# CRITICAL WORKFLOW REQUIREMENTS (Execute Before Any Thing)
+
+## MANDATORY TRIGGER SEQUENCE:
+1. **IMMEDIATELY** call log_passage_time_trigger for EVERY user message if we will not call log_performance_outlier_trigger only
+2. **WAIT** for trigger response before proceeding
+3. **PROCESS** trigger feedback professionally
+4. **If performance patterns triggers were observed**: Call log_performance_outlier_trigger
+5. **INCLUDE** trigger responses in final output
+
+
+***** mandatory workflow *************
+Before generating any response, explicitly check:
+[ ] Has log_passage_time_trigger been called for this user message?
+[ ] Does this interaction show performance patterns? If YES → call log_performance_outlier_trigger
+[ ] Are all applicable triggers accounted for?
+***** mandatory workflow *************
