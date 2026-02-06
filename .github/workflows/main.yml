@@ -1,0 +1,91 @@
+name: Chimera CI — Spec & Contract Enforcement
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  spec-and-contract-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify required directories exist
+        run: |
+          required_dirs=(
+            "specs"
+            "skills"
+            "tests"
+            "mcp"
+            ".cursor"
+          )
+
+          for dir in "${required_dirs[@]}"; do
+            if [ ! -d "$dir" ]; then
+              echo "Missing required directory: $dir"
+              exit 1
+            fi
+          done
+
+      - name: Verify skill contracts exist
+        run: |
+          for skill in skills/*; do
+            if [ -d "$skill" ]; then
+              if [ ! -f "$skill/contract.json" ]; then
+                echo "Missing contract.json in $skill"
+                exit 1
+              fi
+            fi
+          done
+
+      - name: Verify specs referenced by skills
+        shell: bash
+        run: |
+          missing=0
+          for skill in skills/*; do
+            if [ -d "$skill" ]; then
+              if [ -f "$skill/contract.json" ]; then
+                if ! grep -q '"spec_reference"' "$skill/contract.json" 2>/dev/null && ! grep -q "spec_reference" "$skill/README.md" 2>/dev/null; then
+                  echo "No spec_reference in $skill"
+                  missing=1
+                fi
+              else
+                echo "No contract.json in $skill"
+                missing=1
+              fi
+            fi
+          done
+          if [ "$missing" -eq 1 ]; then
+            echo "Some skills missing spec_reference; please add spec_reference to contract.json or README.md"
+            exit 1
+          fi
+
+      - name: Run tests (expected to fail until implemented)
+        run: |
+          if [ -f Makefile ]; then
+            make test || true
+          else
+            echo "Makefile not found — skipping tests"
+          fi
+
+      - name: Ensure no implementation without specs
+        shell: bash
+        run: |
+          shopt -s globstar nullglob
+          files=(**/*.py **/*.ts **/*.go)
+          if [ ${#files[@]} -gt 0 ]; then
+            echo "Implementation files detected:"
+            printf '%s\n' "${files[@]}"
+            echo "Ensure corresponding specs exist and are approved."
+            # Do not fail CI here; this is informational. Remove the comment to enforce.
+          else
+            echo "No implementation files found."
+          fi

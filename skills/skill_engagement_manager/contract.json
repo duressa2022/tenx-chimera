@@ -1,6 +1,7 @@
 {
   "skill_id": "skill_engagement_manager",
   "version": "1.1.0",
+  "spec_reference": "specs/functional/engagement_management.md",
   "description": "Handles engagement actions (comment, mention, dm) across media types: text, audio, video, image.",
   "input": {
     "type": "object",
