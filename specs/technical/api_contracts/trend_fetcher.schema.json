@@ -15,7 +15,11 @@
     "timestamp": {
       "type": "string",
       "format": "date-time"
-    }
+    },
+    "recommended_content_types": { "type": "array", "items": { "type": "string", "enum": ["text","image","video","audio"] } },
+    "example_media": { "type": "array", "items": { "type": "object", "properties": { "url": { "type": "string", "format": "uri" }, "mime_type": { "type": "string" } }, "required": ["url"], "additionalProperties": true } },
+    "provenance": { "type": "object", "additionalProperties": true },
+    "human_review_ticket": { "type": ["string", "null"] }
   },
   "additionalProperties": false
 }

@@ -2,19 +2,28 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "ContentGeneratorOutput",
   "type": "object",
-  "required": ["content_id", "trend_id", "content_type", "body", "risk_classification"],
+  "required": ["content_id", "trend_id", "content_type", "risk_classification"],
   "properties": {
     "content_id": { "type": "string" },
     "trend_id": { "type": "string" },
     "content_type": {
       "type": "string",
-      "enum": ["text", "script", "caption", "hashtag_set"]
+      "enum": ["text", "script", "caption", "hashtag_set", "image", "audio", "video"]
     },
     "body": { "type": "string" },
+    "result": {
+      "oneOf": [
+        { "type": "object", "required": ["url", "mime_type"], "properties": { "url": { "type": "string", "format": "uri" }, "mime_type": { "type": "string" }, "duration_ms": { "type": "integer" }, "thumbnail_url": { "type": "string", "format": "uri" }, "metadata": { "type": "object", "additionalProperties": true } } },
+        { "type": "null" }
+      ]
+    },
     "risk_classification": {
       "type": "string",
       "enum": ["low", "medium", "high"]
-    }
+    },
+    "provenance": { "type": "object", "additionalProperties": true },
+    "content_meta": { "type": "object", "additionalProperties": true },
+    "human_review_ticket": { "type": ["string", "null"] }
   },
   "additionalProperties": false
 }

@@ -31,7 +31,11 @@ Recommended for: MongoDB, DynamoDB, Firestore
   "summary": "string",
   "confidence_score": 0.92,
   "risk_level": "low",
-  "detected_at": "datetime"
+  "detected_at": "datetime",
+  "recommended_content_types": ["text","image"],
+  "example_media": [{"url": "string", "mime_type": "string"}],
+  "provenance": {},
+  "human_review_ticket": null
 }
 
 ### content
@@ -41,8 +45,11 @@ Recommended for: MongoDB, DynamoDB, Firestore
   "trend_id": "string",
   "type": "script",
   "body": "string",
+  "result": { "url": "string (optional)", "mime_type": "string (optional)", "thumbnail_url": "string (optional)", "duration_ms": 0, "metadata": {} },
   "risk_classification": "medium",
   "approval_status": "approved",
+  "content_meta": {},
+  "human_review_ticket": null,
   "created_at": "datetime"
 }
 

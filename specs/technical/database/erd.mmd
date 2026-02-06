@@ -34,6 +34,10 @@ erDiagram
         string risk_classification
         string approval_status
         datetime created_at
+        string result_url
+        string mime_type
+        json content_meta
+        string human_review_ticket
     }
 
     PUBLISH_EVENT {
@@ -42,6 +46,9 @@ erDiagram
         string platform
         string status
         datetime published_at
+        json platform_response
+        json metadata
+        string human_review_ticket
     }
 
     ANALYTICS {

@@ -42,6 +42,10 @@ Recommended for: Postgres, Cloud SQL, Aurora
 - risk_classification
 - approval_status
 - created_at
+ - result_url (nullable) -- URL for generated media (images/audio/video)
+ - mime_type (nullable) -- media MIME type when applicable
+ - content_meta (JSON) -- provenance, generation parameters, model_version
+ - human_review_ticket (nullable) -- ticket id if content requires HITL
 
 ---
 
@@ -51,6 +55,9 @@ Recommended for: Postgres, Cloud SQL, Aurora
 - platform
 - status
 - published_at
+ - platform_response (JSON) -- raw platform response metadata
+ - metadata (JSON) -- publish metadata (provenance attached at publish time)
+ - human_review_ticket (nullable)
 
 ---
 
