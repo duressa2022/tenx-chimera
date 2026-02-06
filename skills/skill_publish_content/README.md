@@ -29,7 +29,6 @@ This skill does NOT:
 ## Allowed Callers
 
 - Worker Agent
-- Orchestrator
 
 Planner Agents are explicitly forbidden.
 
@@ -39,26 +38,18 @@ Planner Agents are explicitly forbidden.
 
 ALL must be true before execution:
 
-- Influencer lifecycle state == `Active`
-- Content approval_status == `approved`
-- Content risk_classification != `high`
-- Platform connector available via MCP
-- Input contract validates
+ - Content `content_meta.risk_classification` != `high` (high-risk content must be human-reviewed before publish)
+ - Provenance metadata attached in `content_meta.provenance`
 
 If any precondition fails → immediate hard failure.
 
----
 
 ## Postconditions
 
 On success:
-- Content is published to exactly one platform
-- Platform response metadata is returned
-- Publish event is emitted
 
 On failure:
-- No retries unless error is classified as transient
-- Failure event is emitted
+ - If publish is blocked due to `high` risk, a `human_review_ticket` is created and returned in the response
 
 ---
 

@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "skill_id": "skill_publish_content",
-  "version": "1.0.0",
-  "description": "Publish approved content to an external platform via MCP",
+  "version": "1.1.0",
+  "description": "Publish approved content to an external platform via MCP. Supports provenance, format options, and human review for high-risk content.",
   "input": {
     "type": "object",
     "required": ["content_id", "content_type", "platform"],
@@ -23,7 +23,18 @@
         "type": ["string", "null"],
         "format": "date-time",
         "description": "Optional future publish time"
-      }
+      },
+      "content_meta": {
+        "type": "object",
+        "description": "Metadata about the content being published (risk, provenance, license)",
+        "properties": {
+          "risk_classification": { "type": "string", "enum": ["low", "medium", "high"] },
+          "provenance": { "type": "object", "additionalProperties": true },
+          "license": { "type": ["string", "null"] }
+        },
+        "additionalProperties": true
+      },
+      "format_options": { "type": "object", "additionalProperties": true }
     },
     "additionalProperties": false
   },
@@ -31,23 +42,14 @@
     "type": "object",
     "required": ["publish_id", "platform", "status", "published_at"],
     "properties": {
-      "publish_id": {
-        "type": "string"
-      },
-      "platform": {
-        "type": "string"
-      },
-      "status": {
-        "type": "string",
-        "enum": ["success", "failed", "pending"]
-      },
-      "published_at": {
-        "type": ["string", "null"],
-        "format": "date-time"
-      },
-      "error_message": {
-        "type": ["string", "null"]
-      }
+      "publish_id": { "type": "string" },
+      "platform": { "type": "string" },
+      "status": { "type": "string", "enum": ["success", "failed", "pending"] },
+      "published_at": { "type": ["string", "null"], "format": "date-time" },
+      "error_message": { "type": ["string", "null"] },
+      "platform_response": { "type": "object", "additionalProperties": true },
+      "metadata": { "type": "object", "additionalProperties": true },
+      "human_review_ticket": { "type": ["string", "null"] }
     },
     "additionalProperties": false
   }

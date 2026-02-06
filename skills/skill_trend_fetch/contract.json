@@ -1,6 +1,6 @@
 {
   "skill_id": "skill_trend_fetch",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "input": {
     "type": "object",
     "required": ["source", "niche"],
@@ -30,7 +30,19 @@
       "risk_level": {
         "type": "string",
         "enum": ["low", "medium", "high"]
-      }
+      },
+      "recommended_content_types": { "type": "array", "items": { "type": "string", "enum": ["text","image","video","audio"] } },
+      "example_media": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": { "url": { "type": "string", "format": "uri" }, "mime_type": { "type": "string" } },
+          "required": ["url"],
+          "additionalProperties": true
+        }
+      },
+      "provenance": { "type": "object", "additionalProperties": true },
+      "human_review_ticket": { "type": ["string", "null"] }
     }
   }
 }

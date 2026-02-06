@@ -1,27 +1,39 @@
 {
   "skill_id": "skill_engagement_manager",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "description": "Handles engagement actions (comment, mention, dm) across media types: text, audio, video, image.",
   "input": {
     "type": "object",
-    "required": ["content_id", "engagement_type", "message"],
+    "required": ["content_id", "content_type", "engagement_type", "payload"],
     "properties": {
       "content_id": { "type": "string" },
-      "engagement_type": {
-        "type": "string",
-        "enum": ["comment", "mention", "dm"]
+      "content_type": { "type": "string", "enum": ["text", "audio", "video", "image"] },
+      "engagement_type": { "type": "string", "enum": ["comment", "mention", "dm", "react"] },
+      "payload": {
+        "oneOf": [
+          { "title": "TextPayload", "type": "object", "required": ["message"], "properties": { "message": { "type": "string" } } },
+          { "title": "MediaPayload", "type": "object", "required": ["media_url"], "properties": { "media_url": { "type": "string", "format": "uri" }, "caption": { "type": "string" } } }
+        ]
       },
-      "message": { "type": "string" }
+      "format_options": { "type": "object", "additionalProperties": true }
     }
   },
   "output": {
     "type": "object",
-    "required": ["response", "classification"],
+    "required": ["engagement_id", "result", "classification"],
     "properties": {
-      "response": { "type": "string" },
-      "classification": {
-        "type": "string",
-        "enum": ["benign", "question", "sensitive", "harassment"]
-      }
+      "engagement_id": { "type": "string" },
+      "result": {
+        "type": "object",
+        "properties": {
+          "delivered": { "type": "boolean" },
+          "delivered_at": { "type": "string", "format": "date-time" },
+          "platform_response": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "classification": { "type": "string", "enum": ["benign", "question", "sensitive", "harassment", "impersonation", "copyright"] },
+      "risk_classification": { "type": "string", "enum": ["low", "medium", "high"] },
+      "human_review_ticket": { "type": "string" }
     }
   }
 }
