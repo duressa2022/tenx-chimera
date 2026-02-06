@@ -1,116 +1,91 @@
-# SQL Schema — Chimera
+# SQL & Time-Series Schema — Chimera
 
 ## Purpose
-Define a relational schema optimized for:
-- Strong consistency
-- Auditing
-- Governance
-- Complex joins
-
-Recommended for: Postgres, Cloud SQL, Aurora
+This schema defines the relational and time-series data structures managed by **PostgreSQL** and **TimescaleDB**.
+- **PostgreSQL:** Handles ACID transactions, multi-tenancy, and complex relational data.
+- **TimescaleDB:** Manages high-velocity telemetry and logs using hypertables for performance and retention.
 
 ---
 
-## Core Tables
+## 1. Transactional Layer (PostgreSQL)
+
+### organizations
+- org_id (PK)
+- name
+- subscription_tier
+- api_key_hash
+- created_at
+
+### users
+- user_id (PK)
+- org_id (FK)
+- email (unique)
+- role (admin, creator, viewer)
+- created_at
 
 ### influencers
 - influencer_id (PK)
+- org_id (FK)
 - persona_name
 - niche
-- lifecycle_state
+- status (active, dormant, archived)
 - created_at
-- updated_at
 
----
-
-### trends
-- trend_id (PK)
-- source
-- summary
-- confidence_score
-- risk_level
-- detected_at
-
----
-
-### content
-- content_id (PK)
-- influencer_id (FK)
-- trend_id (FK)
-- content_type
-- body
-- risk_classification
-- approval_status
-- created_at
- - result_url (nullable) -- URL for generated media (images/audio/video)
- - mime_type (nullable) -- media MIME type when applicable
- - content_meta (JSON) -- provenance, generation parameters, model_version
- - human_review_ticket (nullable) -- ticket id if content requires HITL
-
----
-
-### publish_events
-- publish_id (PK)
-- content_id (FK)
-- platform
+### campaigns
+- campaign_id (PK)
+- org_id (FK)
+- name
+- budget_limit
+- start_date
+- end_date
 - status
-- published_at
- - platform_response (JSON) -- raw platform response metadata
- - metadata (JSON) -- publish metadata (provenance attached at publish time)
- - human_review_ticket (nullable)
+
+### billing_records
+- invoice_id (PK)
+- org_id (FK)
+- amount
+- currency
+- status (paid, pending, failed)
+- transaction_hash (link to On-Chain Ledger)
+- created_at
 
 ---
 
-### analytics
-- analytics_id (PK)
+## 2. Time-Series Layer (TimescaleDB)
+
+### video_render_logs (Hypertable)
+- timestamp (TIMESTAMPTZ - Partition Key)
 - content_id (FK)
-- views
-- likes
-- comments
-- shares
-- sentiment
-- collected_at
+- render_id
+- duration_ms
+- resolution
+- compute_cost
+- status
+
+### performance_telemetry (Hypertable)
+- timestamp (TIMESTAMPTZ - Partition Key)
+- entity_id (Influencer or Content)
+- metric_name (views, clicks, engagement_rate)
+- metric_value
+- source_platform
 
 ---
 
-### engagement_events
-- engagement_id (PK)
-- content_id (FK)
-- engagement_type
-- classification
-- occurred_at
-
----
-
-### agents
-- agent_id (PK)
-- role
-- version
-
----
+## 3. Governance & Metadata
 
 ### audit_logs
 - audit_id (PK)
-- agent_id (FK)
-- influencer_id (FK)
+- org_id (FK)
+- actor_id (User or Agent)
 - action_type
-- outcome
-- spec_reference
+- entity_type
+- entity_id
+- changes (JSONB)
 - occurred_at
 
 ---
 
-## Constraints
-
-- All foreign keys are mandatory
-- Deletions are soft-delete only
-- Audit logs are append-only
-- Lifecycle state enforced at application layer
-
----
-
-## Governance Guarantees
-
-- Full historical traceability
-- Referential integrity
-- Spec-aligned accountability
+## Configuration
+- **Partitioning:** `video_render_logs` and `performance_telemetry` are partitioned by `timestamp`.
+- **Retention:** Default 90-day retention policy for raw telemetry; aggregated daily/weekly after that.
+- **Multi-tenancy:** Enforced via `org_id` on all primary entities. Row-Level Security (RLS) is recommended.

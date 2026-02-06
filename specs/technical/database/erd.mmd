@@ -1,87 +1,99 @@
 erDiagram
-    INFLUENCER ||--o{ TREND : researches
-    TREND ||--o{ CONTENT : inspires
-    CONTENT ||--o{ PUBLISH_EVENT : produces
-    CONTENT ||--o{ ANALYTICS : measured_by
-    INFLUENCER ||--o{ AUDIT_LOG : generates
-    AGENT ||--o{ AUDIT_LOG : records
-    CONTENT ||--o{ ENGAGEMENT_EVENT : receives
+    %% Relational / Transactional (PostgreSQL)
+    ORGANIZATION ||--o{ USER : contains
+    ORGANIZATION ||--o{ INFLUENCER : manages
+    ORGANIZATION ||--o{ CAMPAIGN : runs
+    ORGANIZATION ||--o{ BILLING_RECORD : billed_to
+    
+    INFLUENCER ||--o{ CONTENT : creates
+    CONTENT ||--o{ PUBLISH_EVENT : triggers
+    
+    %% Time-Series (TimescaleDB)
+    CONTENT ||--o{ VIDEO_RENDER_LOG : logs_render
+    INFLUENCER ||--o{ PERFORMANCE_TELEMETRY : tracks_performance
+    CONTENT ||--o{ PERFORMANCE_TELEMETRY : tracks_engagement
+    
+    %% Vector / RAG (Weaviate)
+    INFLUENCER ||--|| AGENT_PERSONA : defined_by
+    INFLUENCER ||--o{ SEMANTIC_MEMORY : remembers
+    
+    %% Governance
+    ORGANIZATION ||--o{ AUDIT_LOG : tracks_actions
+    USER ||--o{ AUDIT_LOG : performs
+    
+    ORGANIZATION {
+        string org_id PK
+        string name
+        string subscription_tier
+    }
+
+    USER {
+        string user_id PK
+        string org_id FK
+        string email
+        string role
+    }
 
     INFLUENCER {
         string influencer_id PK
+        string org_id FK
         string persona_name
-        string niche
-        string lifecycle_state
-        datetime created_at
-        datetime updated_at
+        string status
     }
 
-    TREND {
-        string trend_id PK
-        string source
-        string summary
-        float confidence_score
-        string risk_level
-        datetime detected_at
+    CAMPAIGN {
+        string campaign_id PK
+        string org_id FK
+        string name
+        float budget_limit
+    }
+
+    BILLING_RECORD {
+        string invoice_id PK
+        string org_id FK
+        float amount
+        string status
+        string transaction_hash
     }
 
     CONTENT {
         string content_id PK
-        string trend_id FK
         string influencer_id FK
         string content_type
-        string body
-        string risk_classification
         string approval_status
-        datetime created_at
-        string result_url
-        string mime_type
-        json content_meta
-        string human_review_ticket
     }
 
-    PUBLISH_EVENT {
-        string publish_id PK
+    VIDEO_RENDER_LOG {
+        datetime timestamp PK
         string content_id FK
-        string platform
-        string status
-        datetime published_at
-        json platform_response
-        json metadata
-        string human_review_ticket
+        int duration_ms
+        float compute_cost
     }
 
-    ANALYTICS {
-        string analytics_id PK
-        string content_id FK
-        int views
-        int likes
-        int comments
-        int shares
-        string sentiment
-        datetime collected_at
+    PERFORMANCE_TELEMETRY {
+        datetime timestamp PK
+        string entity_id FK
+        string metric_name
+        float metric_value
     }
 
-    ENGAGEMENT_EVENT {
-        string engagement_id PK
-        string content_id FK
-        string engagement_type
-        string classification
-        datetime occurred_at
+    AGENT_PERSONA {
+        string influencer_id PK
+        string persona_name
+        string vocal_style
     }
 
-    AGENT {
-        string agent_id PK
-        string role
-        string version
+    SEMANTIC_MEMORY {
+        string memory_id PK
+        string influencer_id FK
+        string content
+        float importance
     }
 
     AUDIT_LOG {
         string audit_id PK
-        string agent_id FK
-        string influencer_id FK
+        string org_id FK
+        string actor_id FK
         string action_type
-        string outcome
-        string spec_reference
         datetime occurred_at
     }
