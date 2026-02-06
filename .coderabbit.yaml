@@ -1,0 +1,158 @@
+version: 1
+
+language: python
+
+# --------------------------------------------------
+# Review Philosophy
+# --------------------------------------------------
+tone: strict
+verbosity: medium
+review_summary: true
+
+# The AI reviewer must act as a GOVERNOR, not a helper
+objective: >
+  Enforce spec-driven development, contract integrity,
+  security constraints, and agent governance.
+  Reject any change that violates specifications.
+
+# --------------------------------------------------
+# Global Review Rules
+# --------------------------------------------------
+rules:
+  - id: spec-authority
+    description: Code and configuration MUST align with specs in specs/
+    severity: error
+
+  - id: no-implementation-without-spec
+    description: Implementation without explicit spec coverage is forbidden
+    severity: error
+
+  - id: contract-first
+    description: Skill behavior must be governed by contract.json
+    severity: error
+
+  - id: no-scope-expansion
+    description: New capabilities require new specs and approvals
+    severity: error
+
+  - id: traceability-required
+    description: Every change must be traceable to a spec, test, or governance rule
+    severity: error
+
+# --------------------------------------------------
+# File-Specific Enforcement
+# --------------------------------------------------
+path_rules:
+
+  - paths:
+      - "specs/**"
+    rules:
+      - id: spec-quality
+        description: Specs must be explicit, unambiguous, and machine-readable
+        severity: error
+
+  - paths:
+      - "skills/**"
+    rules:
+      - id: skill-contract-required
+        description: Each skill must include a valid contract.json
+        severity: error
+
+      - id: no-silent-skill-changes
+        description: Skill interface changes require test and spec updates
+        severity: error
+
+  - paths:
+      - "tests/**"
+    rules:
+      - id: tests-are-authoritative
+        description: Tests define expected behavior and must not be weakened
+        severity: error
+
+  - paths:
+      - ".cursor/rules"
+    rules:
+      - id: governance-lock
+        description: Governance rules MUST NOT be modified
+        severity: error
+
+  - paths:
+      - "mcp/**"
+    rules:
+      - id: mcp-traceability
+        description: MCP configuration must preserve full traceability
+        severity: error
+
+# --------------------------------------------------
+# Security & Safety
+# --------------------------------------------------
+security:
+  enable: true
+  check_secrets: true
+  check_dependencies: true
+
+  forbidden_patterns:
+    - "eval("
+    - "exec("
+    - "subprocess"
+    - "os.system"
+    - "curl"
+    - "wget"
+
+# --------------------------------------------------
+# Spec Alignment Checks
+# --------------------------------------------------
+spec_alignment:
+  enabled: true
+  required_directories:
+    - specs
+    - skills
+    - tests
+
+  enforcement:
+    missing_spec: error
+    ambiguous_spec: error
+    undocumented_behavior: error
+
+# --------------------------------------------------
+# Skill Contract Validation
+# --------------------------------------------------
+skill_validation:
+  required_fields:
+    - name
+    - description
+    - inputs
+    - outputs
+    - failure_modes
+
+  forbid_optional_inputs_without_defaults: true
+
+# --------------------------------------------------
+# Test Integrity
+# --------------------------------------------------
+test_policy:
+  forbid_test_deletion: true
+  forbid_test_weakening: true
+  require_new_tests_for_behavior_change: true
+
+# --------------------------------------------------
+# Pull Request Requirements
+# --------------------------------------------------
+pull_request:
+  require_description: true
+  require_spec_reference: true
+  require_test_evidence: true
+
+  description_template:
+    required_sections:
+      - Spec Reference
+      - Change Type
+      - Risk Assessment
+      - Test Evidence
+
+# --------------------------------------------------
+# Final Authority Rule
+# --------------------------------------------------
+final_verdict:
+  on_violation: request_changes
+  block_merge_on_errors: true
