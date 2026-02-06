@@ -46,8 +46,23 @@ Generated content MUST be checked for:
 
 ---
 
-### Approval Flow
+### Media-Specific Requirements
 
+#### Character Consistency Lock (FR 3.1)
+The system SHALL enforce visual identity across all generated media:
+- **Identifier:** Every generation task MUST inject the `visual_consistency_id` from `SOUL.md` into the tool payload.
+- **Reference:** Workers MUST provide the canonical style LoRA or reference image to the generation MCP server (e.g., Ideogram, Midjourney).
+- **Validation:** The Judge agent MUST use a Vision model to verify facial/style resemblance before approval.
+
+#### Hybrid Video Rendering Strategy (FR 3.2)
+To optimize for both quality and cost, the system SHALL implement a tiered rendering strategy:
+- **Tier 1 (Episodic):** Standard Image-to-Video (Living Portraits) for daily engagement.
+- **Tier 2 (Hero):** Full Text-to-Video (Runway/Sora) for primary campaign milestones.
+- **Selection:** The Planner MUST determine the tier based on `priority` and `campaign_budget`.
+
+---
+
+## Approval Flow
 - Low-risk content → auto-approved
 - Medium-risk → Judge review
 - High-risk → Human-in-the-Loop required (no auto-publish)
