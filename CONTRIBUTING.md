@@ -1,10 +1,7 @@
-
----
-
-# 📄 `CONTRIBUTING.md`
-
-```md
 # Contributing to Project Chimera
+
+## 📜 Governance-First Contribution
+Project Chimera uses **Spec-Driven Development (SDD)**. Every change must be preceded by a ratified specification and a failing test case that defines the target behavior.
 
 ## Scope
 
@@ -22,6 +19,17 @@ Contributions MUST follow this order:
 3. Implementation (if applicable)
 
 Any contribution that skips a step will be rejected.
+
+---
+
+## Security Policy — Project Chimera
+
+## Scope
+This policy covers the autonomous influencer factory, including:
+- **Agent Behavior:** Sandboxing and intent validation.
+- **Skill Execution:** Schema-validated input/output.
+- **External Integrations:** MCP-only data ingress/egress.
+- **Data Handling:** Secure metadata processing and commerce.
 
 ---
 
