@@ -35,8 +35,12 @@ Each Chimera Agent MUST expose a public availability record describing:
   "agent_type": "autonomous_influencer",
   "state": "ONLINE | DEGRADED | BUSY | PAUSED | SUSPENDED | OFFLINE",
   "capabilities": ["trend_research", "content_generation"],
+  "capability_versions": { "content_generation": "1.1.0" },
   "risk_profile": "low | medium | high",
   "human_in_loop_required": true,
   "last_heartbeat": "ISO-8601 timestamp",
-  "version": "semantic_version"
+  "version": "semantic_version",
+  "idempotency_key": "string (optional)",
+  "provenance": { "type": "object", "description": "Optional agent-level provenance metadata (e.g., operator, region)" },
+  "rate_limit": { "per_minute": 100, "per_hour": 1000 }
 }
